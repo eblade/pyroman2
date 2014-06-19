@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+
+from pdf.document import Document, DocumentCatalog, next_id, PageTreeNode, Page, Font
+from pdf.object import Dictionary, Array, Rectangle, Name, String
+from pdf.stream import Stream
+from pdf.content import TextObject
+from pdf.dimension import A4, MarginDefault, get_page_box, cm_to_points
+
+doc = Document()
+
+cat = DocumentCatalog(id=next_id())
+doc.body.put(cat)
+
+pages = PageTreeNode(id=next_id())
+page_list = Array()
+pages.Kids(page_list)
+doc.body.put(pages)
+cat.Pages(pages.reference)
+
+name_helvetica = Name("F1")
+name_helvetica_bold = Name("F2")
+font_helvetica = Font(next_id())
+font_helvetica.BaseFont("/Helvetica")
+font_helvetica.Encoding("/WinAnsiEncoding")
+font_helvetica.SubType("/Type1")
+font_helvetica.Name(name_helvetica)
+font_helvetica_bold = Font(next_id())
+font_helvetica_bold.BaseFont("/Helvetica-Bold")
+font_helvetica_bold.Encoding("/WinAnsiEncoding")
+font_helvetica_bold.SubType("/Type1")
+font_helvetica_bold.Name(name_helvetica_bold)
+
+fonts = Dictionary(next_id())
+fonts.put(name_helvetica, font_helvetica.reference)
+fonts.put(name_helvetica_bold, font_helvetica_bold.reference)
+
+resources = Dictionary(next_id())
+resources.put("/Font", fonts.reference)
+
+doc.body.put(font_helvetica)
+doc.body.put(font_helvetica_bold)
+doc.body.put(fonts)
+doc.body.put(resources)
+
+page1 = Page(id=next_id())
+doc.body.put(page1)
+page_list.put(page1.reference)
+page1.Parent(pages.reference)
+page1.Resources(resources)
+page1.MediaBox(get_page_box(A4))
+
+pages.Count(page_list.count)
+
+text_1 = TextObject()
+text_1.Font(name_helvetica_bold, 48)
+text_1.Position(cm_to_points(2), cm_to_points(27))
+text_1.Render(2)
+text_1.Width(2)
+text_1.Gray(0.8)
+text_1.Text(String("Jiajia puss puss"))
+
+text_2 = TextObject()
+text_2.Font(name_helvetica, 12)
+text_2.Position(cm_to_points(2), cm_to_points(26))
+text_2.Render(0)
+text_2.Gray(0)
+text_2.Text(String("Mindre pussar under"))
+
+page1_contents = Stream(next_id())
+page1_contents.put(text_1)
+page1_contents.put(text_2)
+page1_contents.Length(len(text_1)+len(text_2))
+page1.Contents(page1_contents.reference)
+doc.body.put(page1_contents)
+
+doc.trailer.Root(cat.reference)
+doc.trailer.Size(next_id())
+
+with open('test.pdf', 'w') as f:
+    f.write(str(doc))
