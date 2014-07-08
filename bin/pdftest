@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-from pdf.document import Document, DocumentCatalog, next_id, PageTreeNode, Page, Font
-from pdf.object import Dictionary, Array, Rectangle, Name, String
-from pdf.stream import Stream
-from pdf.content import TextObject
-from pdf.dimension import A4, MarginDefault, get_page_box, cm_to_points
+from pyroman.pdf.document import Document, DocumentCatalog, next_id, PageTreeNode, Page, Font
+from pyroman.pdf.object import Dictionary, Array, Rectangle, Name, String
+from pyroman.pdf.stream import Stream
+from pyroman.pdf.content import TextObject
+from pyroman.pdf.dimension import A4, MarginDefault, get_page_box, cm_to_points
 
 doc = Document()
 
