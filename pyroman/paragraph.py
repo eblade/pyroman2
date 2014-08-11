@@ -8,9 +8,12 @@ class TextAtom(Element):
         self.font_size = self._params.get('font-size')
         self.text_color = self._params.get('text-color')
 
+    def __repr__(self):
+        return '<Atom (%i, %i) "%s">' % (self.x, self.y, self.content[:20])
+
     def calculate(self):
         font = self.doc.get_font(self.font_family, self.font_size)
-        self._width, self._height = font.getsize(self.content)
+        self.width, self.height = font.getsize(self.content)
 
     def serialize(self, options={}):
         output = super().serialize(options)
@@ -31,15 +34,17 @@ class Paragraph(Element):
         self.text_color = self._params.get('text-color', self.parent.text_color)
         self.align = self._params.get('align', self.parent.align)
         self.content = self._params.get('content', '')
-        self.max_width = self._params.get('max-width', None)
-        self.max_height = self._params.get('max-height', None)
+        self.max_width = self._params.get('max-width', self.parent.width - (self.margin_left or 0) - (self.margin_right or 0))
+        self.max_height = self._params.get('max-height', self.parent.height - (self.margin_top or 0) - (self.margin_bottom or 0))
         self.line_height = self._params.get('line-height', self.parent.line_height)
         self.space_width = self._params.get('space-width', self.parent.space_width)
-        self._stream = []
+
+    def __repr__(self):
+        return '<Paragraph @%i "%s">' % (self.y, self.content[:20])
 
     @property
     def stream(self):
-        for obj in self._stream:
+        for obj in self.children:
             yield obj
 
     def calculate(self):
@@ -54,9 +59,7 @@ class Paragraph(Element):
         x = 0
         y = 0
         current_line_height = self.line_height
-        print(self.max_height)
         for atom in atoms:
-            print(atom)
             atom.calculate()
             if self.max_width is not None and x + atom.width > self.max_width:
                 y += current_line_height
@@ -67,23 +70,6 @@ class Paragraph(Element):
             atom.position = (x, y)
             x += atom.width + self.space_width
             current_line_height = max(current_line_height, atom.height)
-        self._width = self.max_width
-        self._height = y + current_line_height
-        self._stream = atoms
-
-    def serialize(self, options={}):
-        output = super().serialize(options)
-        output.update({
-            'word-wrap': self.word_wrap,
-            'font-family': self.font_family,
-            'font-size': self.font_size,
-            'text-color': self.text_color,
-            'align': self.align,
-            'content': self.content,
-            'max-width': self.max_width,
-            'max-height': self.max_height,
-            'line-height': self.line_height,
-            'space-width': self.space_width,
-            'stream': [x.serialize(options) for x in self._stream],
-        })
-        return output
+        self.width = self.max_width
+        self.height = y + current_line_height
+        self.children = atoms

@@ -18,16 +18,16 @@ class Body(Object):
 class CrossReferenceTable(Object):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.put(0, 65536) # i think it should be there
+        self.put(0, 65536, keyword='f') # i think it should be there
 
     def __str__(self):
-        return "xref\n%i %i\n%s" % (
+        return "xref\n%i %i\n%s\n" % (
             0, len(self._content),
-            '\n'.join(['%010i %05i n \n' % x for x in self._content])
+            '\n'.join(['%010i %05i %s ' % x for x in self._content])
         )
     
-    def put(self, identifier, generation=0):
-        self._content.append((int(identifier), int(generation)))
+    def put(self, offset, generation=0, keyword='n'):
+        self._content.append((int(offset), int(generation), keyword))
 
 
 class Trailer:
@@ -285,13 +285,16 @@ class Document:
         self.trailer = Trailer()
 
     def __str__(self):
-        body_and_header =  ''.join([
-            str(self.header),
-            self.body.objects,
-        ])
-        self.trailer.offset_to_cross_reference_table = len(body_and_header)
+        header = str(self.header)
+        ack = len(header)
+        for o in self.body._content:
+            self.cross_reference_table.put(ack)
+            ostr = str(o.obj)
+            ack += len(ostr)
+        self.trailer.offset_to_cross_reference_table = ack
         return ''.join([
-            body_and_header,
+            header,
+            self.body.objects,
             str(self.cross_reference_table),
             str(self.trailer),
         ])

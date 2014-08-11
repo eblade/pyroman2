@@ -28,3 +28,12 @@ class Parameters:
 
     def get_defaults(self):
         return {n: p.get('default', None) for n, p in self.parameters.items()}
+
+    # to make it picklable
+    def __getstate__(self):
+        odict = self.__dict__.copy()
+        odict['class'] = self.__class__.__name__
+        internals = [k for k in odict.keys() if k.startswith('_')]
+        for k in internals:
+            del odict[k]
+        return odict

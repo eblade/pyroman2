@@ -2,13 +2,13 @@ class Element:
     def __init__(self, doc=None, parent=None, params={}):
         self.doc = doc
         self.parent = parent or doc
-        self._children = []
-        self._local = params
-        self._width = 0
-        self._height = 0
+        self.children = []
+        self.width = 0
+        self.height = 0
+        self.x = 0
+        self.y = 0
         self._rendered = 0
         self._params = params
-        self.position = (0, 0) 
         self.margin_top = 0
         self.margin_bottom = 0
         self.margin_left = 0
@@ -27,55 +27,44 @@ class Element:
         pass
 
     @property
-    def width(self):
-        return self._width
-
-    @property
-    def height(self):
-        return self._height
-
-    @property
-    def x(self):
-        return self._position[0]
-
-    @property
-    def y(self):
-        return self._position[1]
-
-    @property
     def position(self):
-        return self._position
-
-    @x.setter
-    def x(self, x):
-        self._position = (x, self._position[1])
-
-    @y.setter
-    def y(self, y):
-        self._position = (self._position[0], y)
+        return self.x, self.y
 
     @position.setter
     def position(self, pos):
         (x, y) = pos
-        self._position = (x, y)
+        self.x = x
+        self.y = y
+
+    @property
+    def dimension(self):
+        return (self.width, self.height)
+
+    @property
+    def margin(self):
+        return (self.margin_top, self.margin_right, self.margin_bottom, self.margin_left)
+
+    @margin.setter
+    def margin(self, margin):
+        self.margin_top, self.margin_right, self.margin_bottom, self.margin_left = margin
 
     def append(self, obj):
-        self._children.append(obj)
+        self.children.append(obj)
 
-    def serialize(self, options={}):
-        return {
-            'class': self.__class__.__name__,
-            'children': [x.serialize() for x in self._children],
-            #'local': self._local,
-            'width': self._width,
-            'height': self._height,
-            'rendered': self._rendered,
-            #'params': self._params,
-            'position': self.position,
-            'margin_top': self.margin_top,
-            'margin_bottom': self.margin_bottom,
-            'margin_left': self.margin_left,
-            'margin_right': self.margin_right,
-            'label': self.label,
-            'label_class': self.label_class,
-        }
+    def copy(self):
+        a = self.__class__()
+        a.__dict__ = self.__getstate__()
+        return a
+
+    # to make it picklable
+    def __getstate__(self):
+        odict = self.__dict__.copy()
+        odict['class'] = self.__class__.__name__
+        internals = [k for k in odict.keys() if k.startswith('_')]
+        for k in internals:
+            del odict[k]
+        del odict['doc']
+        del odict['parent']
+        if 'parameters' in odict:
+            del odict['parameters']
+        return odict

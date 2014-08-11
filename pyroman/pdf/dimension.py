@@ -29,9 +29,9 @@ Quarto = (610, 780)
 
 
 MarginDefault = (
-    cm_to_points(2.5),
-    cm_to_points(2.5),
-    cm_to_points(2.5),
-    cm_to_points(2.5),
+    cm_to_points(2.5), # top
+    cm_to_points(2.0), # right
+    cm_to_points(1.5), # bottom
+    cm_to_points(2.0), # left
 )
 
