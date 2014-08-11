@@ -1,6 +1,8 @@
 pyroman2
 ========
 
+[![Build Status](https://travis-ci.org/eblade/pyroman2.svg?branch=master)](https://travis-ci.org/eblade/pyroman2)
+
 The way-too-ambitious project that I somehow can't let go the idea of
 
 
