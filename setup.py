@@ -5,7 +5,11 @@ from distutils.core import setup
 
 name_ = 'pyroman2'
 version_ = '2.0.0'
-package_ = 'pyroman'
+packages_ = [
+    'pyroman',
+    'pyroman.pdf',
+    'pyroman.convert'
+]
 
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -26,6 +30,6 @@ setup(
     url='https://github.com/eblade/'+name_,
     download_url=('https://github.com/eblade/%s/archive/v%s.tar.gz'
                   % (name_, version_)),
-    packages=[package_],
+    packages=packages_,
     classifiers = classifiers
 )
