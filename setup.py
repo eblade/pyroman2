@@ -5,6 +5,7 @@ from distutils.core import setup
 
 name_ = 'pyroman2'
 version_ = '2.0.0'
+package_ = 'pyroman'
 
 classifiers = [
     "Development Status :: 2 - Pre-Alpha",
@@ -21,9 +22,10 @@ setup(
     author='Johan Egneblad',
     author_email='johan.egneblad@DELETEMEgmail.com',
     description='Typesetting tool and library',
-    license = "BSD",
+    license="BSD",
     url='https://github.com/eblade/'+name_,
-    download_url='https://github.com/eblade/'+name_+'/archive/v'+version_+'.tar.gz',
-    packages=[name_],
+    download_url=('https://github.com/eblade/%s/archive/v%s.tar.gz'
+                  % (name_, version_)),
+    packages=[package_],
     classifiers = classifiers
 )
