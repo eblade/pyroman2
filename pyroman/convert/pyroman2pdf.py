@@ -1,8 +1,9 @@
-from pyroman.pdf.document import Document, DocumentCatalog, next_id, PageTreeNode, Page, Font
-from pyroman.pdf.object import Dictionary, Array, Rectangle, Name, String
+from pyroman.pdf.document import Document, DocumentCatalog, next_id, \
+    PageTreeNode, Page, Font
+from pyroman.pdf.object import Dictionary, Array, Name, String
 from pyroman.pdf.stream import Stream
 from pyroman.pdf.content import TextObject
-from pyroman.pdf.dimension import A4, MarginDefault, get_page_box, cm_to_points
+from pyroman.pdf.dimension import get_page_box
 
 
 def convert(document):
@@ -17,28 +18,32 @@ def convert(document):
     doc.body.put(pages)
     cat.Pages(pages.reference)
 
-    name_helvetica = Name("F1")
-    name_helvetica_bold = Name("F2")
-    font_helvetica = Font(next_id())
-    font_helvetica.BaseFont("/Helvetica")
-    font_helvetica.Encoding("/WinAnsiEncoding")
-    font_helvetica.SubType("/Type1")
-    font_helvetica.Name(name_helvetica)
-    font_helvetica_bold = Font(next_id())
-    font_helvetica_bold.BaseFont("/Helvetica-Bold")
-    font_helvetica_bold.Encoding("/WinAnsiEncoding")
-    font_helvetica_bold.SubType("/Type1")
-    font_helvetica_bold.Name(name_helvetica_bold)
+    font_objects = []
+    font_names = {}
+    fc = 1
+    for k in document.fonts:
+        font_name, size = k.split('-')
+        if font_name in font_names:
+            continue
+        name = Name('F%i' % fc)
+        font = Font(id=next_id())
+        font.BaseFont(Name(font_name))
+        font.Encoding("/WinAnsiEncoding")
+        font.SubType("/Type1")
+        font.Name(name)
+        font_objects.append((name, font.reference))
+        font_names[font_name] = name
+        doc.body.put(font)
+        fc += 1
+    print(font_names)
+    print(font_objects)
 
-    fonts = Dictionary(next_id())
-    fonts.put(name_helvetica, font_helvetica.reference)
-    fonts.put(name_helvetica_bold, font_helvetica_bold.reference)
-
-    resources = Dictionary(next_id())
+    fonts = Dictionary(id=next_id())
+    for font_name, reference in font_objects:
+        fonts.put(font_name, reference)
+    resources = Dictionary(id=next_id())
     resources.put("/Font", fonts.reference)
 
-    doc.body.put(font_helvetica)
-    doc.body.put(font_helvetica_bold)
     doc.body.put(fonts)
     doc.body.put(resources)
 
@@ -49,14 +54,14 @@ def convert(document):
         pdf_page.Parent(pages.reference)
         pdf_page.Resources(resources)
         pdf_page.MediaBox(get_page_box(page.dimension))
-        
+
         pdf_page_contents = Stream(next_id())
         pdf_page_contents_length = 0
-        
+
         for atom in page.atoms:
             text = TextObject()
-            text.Font(name_helvetica_bold, 12)
-            text.Position(atom.x, page.height - atom.y)
+            text.Font(font_names.get(atom.font_family), atom.font_size)
+            text.Position(atom.x, page.height - atom.base_line)
             text.Text(String(atom.content))
             pdf_page_contents.put(text)
             pdf_page_contents_length += len(text)
@@ -64,10 +69,10 @@ def convert(document):
         pdf_page_contents.Length(pdf_page_contents_length)
         pdf_page.Contents(pdf_page_contents.reference)
         doc.body.put(pdf_page_contents)
-            
+
     pages.Count(page_list.count)
 
     doc.trailer.Root(cat.reference)
     doc.trailer.Size(next_id())
-        
+
     return doc

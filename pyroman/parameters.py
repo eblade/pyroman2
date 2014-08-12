@@ -1,17 +1,18 @@
-from .constants import *
+from .constants import ALIGN_LEFT
+
 
 class Parameters:
     def __init__(self):
         self.parameters = {
             'word-wrap': {'type': bool, 'default': True},
             'align': {'type': str, 'default': ALIGN_LEFT},
-            'font-family': {'type': str, 'default': 'Ubuntu-R'},
+            'font-family': {'type': str, 'default': 'Helvetica'},
             'font-size': {'type': int, 'default': 12},
             'text-color': {'type': str, 'default': '#000000'},
             'max-width': {'type': int, 'default': None},
             'max-height': {'type': int, 'default': None},
-            'line-height': {'type': int, 'default': 14},
-            'space-width': {'type': int, 'default': 5},
+            'line-height': {'type': float, 'default': 1.2},
+            'space-width': {'type': int, 'default': 3},
         }
 
     def get_default(self, field):

@@ -2,7 +2,7 @@ from PIL import ImageFont
 
 from .element import Element
 from .parameters import Parameters
-from .constants import *
+
 
 class Document(Element):
     def __init__(self, params={}):
@@ -34,6 +34,11 @@ class Document(Element):
             font = ImageFont.truetype('%s.ttf' % font_family, font_size)
             self._font_cache[key] = font
         return font
+
+    @property
+    def fonts(self):
+        for k in self._font_cache.keys():
+            yield k
 
     def __repr__(self):
         return '<Document>'

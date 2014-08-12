@@ -4,6 +4,7 @@ import pyroman.json as json
 
 from tests.fixture import a4doc
 
+
 class TestConvert:
     def test_single_page(self):
         document, page, box = a4doc()
@@ -40,8 +41,10 @@ class TestConvert:
 
         print(json.dumph(document))
         print([atom for atom in page.atoms])
-        
+
         pdf = pyroman2pdf.convert(document)
-            
+
         with open('/tmp/test_single_page.pdf', 'w') as f:
             f.write(str(pdf))
+
+        assert False

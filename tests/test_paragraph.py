@@ -1,11 +1,8 @@
-from pyroman.document import Document
-from pyroman.page import Page, Layout
-from pyroman.box import Box
 from pyroman.paragraph import Paragraph
 from tests.fixture import a4doc
 
 import pyroman.json as json
-    
+
 
 class TestParagraph:
     def test_calculate(self):
@@ -24,7 +21,7 @@ class TestParagraph:
         assert p.height == 28
         assert p.width == 200
         assert p.children[0].position == (0, 0)
-    
+
     def test_two_paragraphs(self):
         document, page, box = a4doc()
 
