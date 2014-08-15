@@ -21,22 +21,21 @@ def convert(document):
     font_objects = []
     font_names = {}
     fc = 1
-    for k in document.fonts:
-        font_name, size = k.split('-')
-        if font_name in font_names:
+    for font_info in document.fonts:
+        font_key = font_info.get('font-key')
+        print(font_key)
+        if font_key in font_names:
             continue
         name = Name('F%i' % fc)
         font = Font(id=next_id())
-        font.BaseFont(Name(font_name))
+        font.BaseFont(Name(font_info.get('pdf')))
         font.Encoding("/WinAnsiEncoding")
         font.SubType("/Type1")
         font.Name(name)
         font_objects.append((name, font.reference))
-        font_names[font_name] = name
+        font_names[font_key] = name
         doc.body.put(font)
         fc += 1
-    print(font_names)
-    print(font_objects)
 
     fonts = Dictionary(id=next_id())
     for font_name, reference in font_objects:
@@ -58,11 +57,16 @@ def convert(document):
         pdf_page_contents = Stream(next_id())
         pdf_page_contents_length = 0
 
-        for atom in page.atoms:
+        for paragraph in page.paragraphs:
             text = TextObject()
-            text.Font(font_names.get(atom.font_family), atom.font_size)
-            text.Position(atom.x, page.height - atom.base_line)
-            text.Text(String(atom.content))
+            text.Td(paragraph.x + paragraph.first_indent,
+                    page.height - paragraph.y - paragraph.base_line)
+            for n, atom in enumerate(paragraph.atoms):
+                text.Tf(font_names.get(atom.font_key), atom.font_size)
+                if atom.beginning_of_line and n > 0:
+                    text.Td(atom.indent, -atom.line_height)
+                    text.Tw(atom.word_spacing)
+                text.Tj(String(atom.content))
             pdf_page_contents.put(text)
             pdf_page_contents_length += len(text)
 

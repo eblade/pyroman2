@@ -30,20 +30,67 @@ class TextObject(Element):
         self.start_tag = "BT"
         self.end_tag = "ET"
 
-    def Font(self, font, size):
+    def Tf(self, font, size):
+        """ Set font """
         self.put("%s %i Tf" % (str(font), int(size)))
 
-    def Position(self, from_left, from_bottom):
-        self.put("%i %i Td" % (int(from_left), int(from_bottom)))
+    def Td(self, tx, ty):
+        """ First time: go to (tx, ty) 
+            Then: go to next line and offset by (tx, ty) """
+        self.put("%i %i Td" % (int(tx), int(ty)))
 
-    def Render(self, render_mode):
+        """ Set render mode 
+            0 - Fill text
+            1 - Stroke text
+            2 - Fill, then stroke
+            3 - Invisible
+            4 - Fill text and add path for clipping
+            5 - Stroke text and add path for clipping
+            6 - Fill text and stroke and add path for clipping
+            7 - Add test to path for clipping """
+    def Tr(self, render_mode):
         self.put("%i Tr" % int(render_mode))
 
-    def Width(self, width):
+    def w(self, width):
+        """ Set stroke width """
         self.put("%i w" % int(width))
 
-    def Gray(self, gray):
+    def g(self, gray):
+        """ Set gray level 0.0 - 1.0"""
         self.put("%f g" % float(gray))
 
-    def Text(self, string):
+    def Tj(self, string):
+        """ Show text """
         self.put("%s Tj" % (str(string)))
+
+    def Tc(self, charSpace):
+        """ Set char spacing (defaults to 0) """
+        self.put("%i Tc" % (int(charSpace)))
+
+    def Tw(self, wordSpace):
+        """ Set word spacing (defaults to 0) """
+        self.put("%i Tw" % (int(wordSpace)))
+
+    def Tz(self, scaling):
+        """ Set horizontal scaling in percent (defaults to 100) """
+        self.put("%i Tz" % (int(scaling)))
+
+    def TL(self, leading):
+        """ Set text leading (line height) """
+        self.put("%i TL" % (int(leading)))
+
+    def Ts(self, rise):
+        """ Set text rise """
+        self.put("%i Ts" % (int(rise)))
+
+    def Tstar(self):
+        """ Equivalent to 0 <Tl> Td """
+        self.put("T*")
+
+    def Ttick(self, string):
+        """ Equivalent to T* string Tj """
+        self.put("%s '" % (str(string)))
+
+    def Tticktick(self, aw, ac, string):
+        """ Equivalent to aw Tw ac Tc string ' """
+        self.put("%i %i %s \"" % (int(aw), int(ac), str(string)))

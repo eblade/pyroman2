@@ -1,4 +1,4 @@
-from .constants import ALIGN_LEFT
+from .constants import ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER, ALIGN_JUSTIFY
 
 
 class Parameters:
@@ -7,12 +7,14 @@ class Parameters:
             'word-wrap': {'type': bool, 'default': True},
             'align': {'type': str, 'default': ALIGN_LEFT},
             'font-family': {'type': str, 'default': 'Helvetica'},
+            'font-style': {'type': str, 'default': 'standard'},
             'font-size': {'type': int, 'default': 12},
             'text-color': {'type': str, 'default': '#000000'},
             'max-width': {'type': int, 'default': None},
             'max-height': {'type': int, 'default': None},
             'line-height': {'type': float, 'default': 1.2},
             'space-width': {'type': int, 'default': 3},
+            'first-indent': {'type': int, 'default': 0},
         }
 
     def get_default(self, field):

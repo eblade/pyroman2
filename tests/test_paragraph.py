@@ -41,5 +41,7 @@ class TestParagraph:
         assert p1.y == 0
         assert p2.y == p1.height
 
-        atoms = [atom for atom in page.atoms]
-        assert len(atoms) == 16
+        paragraphs = [p for p in page.paragraphs]
+        assert len(paragraphs) == 2
+        for p in paragraphs:
+            assert len(p.children) == 8

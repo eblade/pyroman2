@@ -7,6 +7,8 @@ class Box(Element):
             'word-wrap', self.parent.word_wrap)
         self.font_family = self._params.get(
             'font-family', self.parent.font_family)
+        self.font_style = self._params.get(
+            'font-style', self.parent.font_style)
         self.font_size = self._params.get(
             'font-size', self.parent.font_size)
         self.text_color = self._params.get(
@@ -25,6 +27,8 @@ class Box(Element):
             'space-width', self.parent.space_width)
         self.box_class = self._params.get(
             'box-class', 'content')
+        self.first_indent = self._params.get(
+            'first-indent', self.parent.first_indent)
 
         self._stream = []
         self._font_cache = {}
@@ -44,7 +48,7 @@ class Box(Element):
             child.x = child.margin_left
             child.y = current_y + max(last_bottom_margin, child.margin_top)
             child.calculate()  # should pass "obstacles" into this one
-            current_y += child.height
+            current_y = child.y + child.height
             last_bottom_margin = child.margin_bottom
         return orphans
 

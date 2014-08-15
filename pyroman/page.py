@@ -6,6 +6,8 @@ class Page(Element):
         self.word_wrap = self._params.get('word-wrap', self.parent.word_wrap)
         self.font_family = self._params.get('font-family',
                                             self.parent.font_family)
+        self.font_style = self._params.get('font-style',
+                                            self.parent.font_style)
         self.font_size = self._params.get('font-size', self.parent.font_size)
         self.text_color = self._params.get('text-color',
                                            self.parent.text_color)
@@ -24,6 +26,8 @@ class Page(Element):
                                            self.parent.margin_top)
         self.margin_bottom = self._params.get('margin-bottom',
                                               self.parent.margin_bottom)
+        self.first_indent = self._params.get('first-indent',
+                                              self.parent.first_indent)
         self.page_number = self._params.get('page_number', 0)
 
         self.layout = None
@@ -37,15 +41,10 @@ class Page(Element):
         super().append(box)
 
     @property
-    def atoms(self):
+    def paragraphs(self):
         for box in self.children:
             for paragraph in box.children:
-                for atom in paragraph.children:
-                    copy_of_atom = atom.copy()
-                    copy_of_atom.x += box.x + paragraph.x
-                    copy_of_atom.y += box.y + paragraph.y
-                    copy_of_atom.base_line += box.y + paragraph.y
-                    yield copy_of_atom
+                yield paragraph
 
     def __repr__(self):
         return '<Page %s %ix%i>' % (str(self.page_number), self.width,
