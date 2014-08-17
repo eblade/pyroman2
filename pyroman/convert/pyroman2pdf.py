@@ -59,8 +59,9 @@ def convert(document):
 
         for paragraph in page.paragraphs:
             text = TextObject()
-            text.Td(paragraph.x + paragraph.first_indent,
-                    page.height - paragraph.y - paragraph.base_line)
+            px, py = paragraph.absolute_position
+            text.Td(px + paragraph.first_indent,
+                    page.height - paragraph.absolute_base_line)
             for n, atom in enumerate(paragraph.atoms):
                 text.Tf(font_names.get(atom.font_key), atom.font_size)
                 if atom.beginning_of_line and n > 0:

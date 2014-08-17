@@ -37,6 +37,14 @@ class Element:
         self.y = y
 
     @property
+    def absolute_position(self):
+        if self.parent is None:
+            return self.position
+        else:
+            px, py = self.parent.absolute_position
+            return px + self.x, py + self.y
+
+    @property
     def dimension(self):
         return (self.width, self.height)
 

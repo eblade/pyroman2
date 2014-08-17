@@ -1,0 +1,14 @@
+This is the title
+subtitle: This is the slightly longer subtitle
+author: J. Egneblad
+
+= This is the first heading =
+
+And this is the text of the first paragraph.
+
+= This is the second heading =
+
+And this is the text of the second paragraph.
+
+Code:
+Some code goes here

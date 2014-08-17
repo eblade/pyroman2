@@ -54,10 +54,15 @@ class TextAtom(Element):
         self.width, self.height = font.getsize(self.content)
         self.line_height = self.font_size * self.parent.line_height
 
+    @property
+    def absolute_base_line(self):
+        px, py = self.parent.absolute_position
+        return py + self.base_line
+
 
 class TextLine:
     def __init__(self, top, width, indent=0):
-        self.atoms = []
+        self.children = []
         self.max_char_spacing = 3.0
         self.max_word_spacing = .25
         self.line_height = None
@@ -67,40 +72,40 @@ class TextLine:
         self.base_line = None
 
     def add_atom(self, atom):
-        self.atoms.append(atom)
+        self.children.append(atom)
         self.add_spaces()
-        all_words_width = float(sum([x.width for x in self.atoms]))
+        all_words_width = float(sum([x.width for x in self.children]))
         return self.width - self.indent - all_words_width
 
     def add_spaces(self):
-        for atom in self.atoms[:-1]:
+        for atom in self.children[:-1]:
             if atom.end_of_word and not atom.content.endswith(' '):
                 atom.content += ' '
                 atom.calculate()
             atom.end_of_line = False
-        self.atoms[0].beginning_of_line = True   
-        self.atoms[0].indent = self.indent   
-        self.atoms[-1].end_of_line = True   
+        self.children[0].beginning_of_line = True   
+        self.children[0].indent = self.indent   
+        self.children[-1].end_of_line = True   
 
     def calculate_line_height(self):
-        if len(self.atoms) == 0:
+        if len(self.children) == 0:
             self.line_height = 0 
             return 0
-        self.line_height = max([x.line_height for x in self.atoms])
-        self.atoms[0].line_height = self.line_height
+        self.line_height = max([x.line_height for x in self.children])
+        self.children[0].line_height = self.line_height
         self.base_line = self.top + self.line_height
-        for atom in self.atoms:
+        for atom in self.children:
             atom.base_line = self.base_line
             atom.y = self.base_line - atom.height
         return self.line_height
 
     def justify(self):
         width = float(self.width) - float(self.indent)
-        all_words_width = float(sum([x.width for x in self.atoms]))
-        nr_of_chars = sum([x.length for x in self.atoms])
-        nr_of_words = len([x for x in self.atoms if x.end_of_word or x.end_of_line])
+        all_words_width = float(sum([x.width for x in self.children]))
+        nr_of_chars = sum([x.length for x in self.children])
+        nr_of_words = len([x for x in self.children if x.end_of_word or x.end_of_line])
         missing = width - all_words_width
-        self.atoms[0].word_spacing = missing / float(nr_of_words - 1)
+        self.children[0].word_spacing = missing / float(nr_of_words - 1)
 
 
 class Paragraph(Element):
@@ -144,16 +149,20 @@ class Paragraph(Element):
             'margin-left', 0)
         self.first_indent = self._params.get(
             'first_indent', self.parent.first_indent)
+        self.preformatted = self._params.get(
+            'preformatted', False)
         self.base_line = 0
 
     def __repr__(self):
-        return '<Paragraph (%i, _%i/%i) %i+%i+%i "%s">' % (
+        return '<Paragraph (%i, _%i/%i) %i+%i+%i ay%i a_%i "%s">' % (
             self.x,
             self.base_line,
             self.y,
             self.margin_top,
             self.height,
             self.margin_bottom,
+            int(self.absolute_position[1]),
+            int(self.absolute_base_line),
             self.content[:20]
         )
 
@@ -167,7 +176,16 @@ class Paragraph(Element):
         self.height = 0
         x = 0
         y = 0
-        words = self.content.split(' ')
+        if self.content.startswith('\n'):
+            self.content = self.content[1:]
+        if self.preformatted:
+            words = self.content.split('\n')
+        else:
+            self.content = self.content.replace('\n', ' ')
+            self.content = self.content.replace('\t', ' ')
+            self.content = self.content.replace('   ', ' ')
+            self.content = self.content.replace('  ', ' ')
+            words = self.content.split(' ')
         lines = []
         line_no = 0
         current_line = TextLine(0, self.width, indent=self.first_indent)
@@ -185,6 +203,8 @@ class Paragraph(Element):
             atom.calculate()
             if atom.width <= left:
                 left = current_line.add_atom(atom)
+                if self.preformatted:
+                    left = 0
             else:
                 line_height = current_line.calculate_line_height()
                 self.height += line_height
@@ -195,6 +215,8 @@ class Paragraph(Element):
                 if line_no == 1 and self.first_indent > 0:  # second line
                     current_line.indent = -self.first_indent
                 left = current_line.add_atom(atom)
+                if self.preformatted:
+                    left = 0
         self.height += current_line.calculate_line_height()
         lines.append(current_line)
         for line in lines:
@@ -202,15 +224,16 @@ class Paragraph(Element):
                 line.justify()
         self.children = [] 
         for line in lines:
-            for atom in line.atoms:
+            for atom in line.children:
                 self.children.append(atom)
-        self.base_line = self.y + lines[0].base_line
+        self.base_line = lines[0].base_line
 
     @property
     def atoms(self):
         for atom in self.children:
-            copy_of_atom = atom.copy()
-            copy_of_atom.x += self.parent.x + self.parent.parent.x
-            copy_of_atom.y += self.parent.y + self.parent.parent.y
-            copy_of_atom.base_line += self.parent.parent.y + self.parent.y
-            yield copy_of_atom
+            yield atom
+
+    @property
+    def absolute_base_line(self):
+        ax, ay = self.absolute_position
+        return ay + self.base_line

@@ -57,7 +57,7 @@ class Document(Element):
 
     def get_font(self, font_family, font_style, font_size):
         key = '%s-%s-%i' % (font_family, font_style, font_size)
-        ttf, pdf = font_names.get(font_family, {}).get(font_style)
+        ttf, pdf = font_names.get(font_family, {}).get(font_style, (None, None))
         if ttf is None:
             raise ValueError("No such font %s %s" % (font_family, font_style))
         font_info = self._font_cache.get(key, None)

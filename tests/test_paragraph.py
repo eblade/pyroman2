@@ -17,10 +17,13 @@ class TestParagraph:
 
         print(json.dumph(document))
 
+        assert p.absolute_position == (page.margin_left, page.margin_top)
         assert len(p.children) == 13
-        assert p.height == 28
+        assert int(p.height) == 28
         assert p.width == 200
-        assert p.children[0].position == (0, 0)
+        first_atom = p.children[0]
+        assert first_atom.position[0] == p.first_indent  # x
+        assert first_atom.position[1] == first_atom.base_line - first_atom.height  # y
 
     def test_two_paragraphs(self):
         document, page, box = a4doc()
@@ -45,3 +48,5 @@ class TestParagraph:
         assert len(paragraphs) == 2
         for p in paragraphs:
             assert len(p.children) == 8
+
+        assert p2.base_line == p2.children[0].line_height

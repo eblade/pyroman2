@@ -1,5 +1,96 @@
 from .constants import ALIGN_LEFT, ALIGN_RIGHT, ALIGN_CENTER, ALIGN_JUSTIFY
 
+defaults = {
+    'text': {
+        'font-family': 'Times',
+        'font-size': 11,
+        'margin-top': 5,
+        'margin-bottom': 10,
+    },
+    'title': {
+        'font-family': 'Helvetica',
+        'font-style': 'bold',
+        'font-size': 32,
+        'margin-top': 40,
+        'margin-bottom': 10,
+    },
+    'subtitle': {
+        'font-family': 'Helvetica',
+        'font-style': 'bold',
+        'font-size': 16,
+        'margin-top': 10,
+        'margin-bottom': 20,
+    },
+    'author': {
+        'font-family': 'Times',
+        'font-style': 'bold',
+        'font-size': 12,
+        'margin-top': 20,
+        'margin-bottom': 10,
+    },
+    'date': {
+        'font-family': 'Times',
+        'font-size': 12,
+        'margin-bottom': 30,
+    },
+    'code': {
+        'font-family': 'Courier',
+        'font-size': 10,
+        'margin-bottom': 10,
+        'margin-bottom': 10,
+        'preformatted': True,
+    },
+    'heading1': {
+        'font-family': 'Helvetica',
+        'font-style': 'bold',
+        'font-size': 24,
+        'margin-top': 30,
+        'margin-bottom': 20,
+    },
+    'heading2': {
+        'font-family': 'Helvetica',
+        'font-style': 'bold',
+        'font-size': 20,
+        'margin-top': 20,
+        'margin-bottom': 15,
+    },
+    'heading3': {
+        'font-family': 'Helvetica',
+        'font-style': 'bold',
+        'font-size': 16,
+        'margin-top': 20,
+        'margin-bottom': 15,
+    },
+    'heading4': {
+        'font-family': 'Helvetica',
+        'font-style': 'bold',
+        'font-size': 12,
+        'margin-top': 20,
+        'margin-bottom': 15,
+    },
+    'heading5': {
+        'font-family': 'Times',
+        'font-style': 'bold',
+        'font-size': 11,
+        'margin-top': 10,
+        'margin-bottom': 10,
+    },
+    'heading6': {
+        'font-family': 'Times',
+        'font-style': 'bolditalic',
+        'font-size': 11,
+        'margin-top': 10,
+        'margin-bottom': 10,
+    },
+    'heading7': {
+        'font-family': 'Times',
+        'font-style': 'italic',
+        'font-size': 11,
+        'margin-top': 10,
+        'margin-bottom': 10,
+    },
+}
+        
 
 class Parameters:
     def __init__(self):
