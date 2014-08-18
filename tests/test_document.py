@@ -67,4 +67,4 @@ class TestDocument:
 
         print(json.dumph(document))
 
-        assert False
+        # must actually test stuff here
