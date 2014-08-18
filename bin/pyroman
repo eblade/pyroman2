@@ -27,7 +27,7 @@ if len(args) < 1:
     exit(1)
 
 filename = args[0] 
-outfile = args[1] if len(args) > 1 else ''.join([options.output_dir,'/', filename,'.html'])
+outfile = args[1] if len(args) > 1 else filename + options.format
 
 
 p = Processor('', filename, True)
@@ -42,11 +42,11 @@ if options.author:
 
 p.generate()
 
-print(p.get_objects_as_string())
+#print(p.get_objects_as_string())
 
 document = pyro2pyroman.convert(p)
 
-print(json.dumph(document))
+#print(json.dumph(document))
 
 pdf = pyroman2pdf.convert(document)
 

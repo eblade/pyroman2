@@ -12,3 +12,23 @@ And this is the text of the second paragraph.
 
 Code:
 Some code goes here
+The code has more than one line
+and can be
+terminated at any place and have
+any   number of
+    spaces sort of
+       anywhere.
+
+= Heading 1 =
+
+== Heading 2 ==
+
+=== Heading 3 ===
+
+==== Heading 4 ====
+
+===== Heading 5 =====
+
+====== Heading 6 ======
+
+======= Heading 7 =======

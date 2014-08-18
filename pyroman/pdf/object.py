@@ -77,7 +77,7 @@ class String(Object):
         self._content = value
 
     def __str__(self):
-        return "(%s)" % super().__str__()
+        return "(%s)" % super().__str__().replace(')', '\)').replace('(', '\(')
 
 class HexadecimalString(Object):
     def __init__(self, *args, **kwargs):

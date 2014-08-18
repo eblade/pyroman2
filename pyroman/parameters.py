@@ -6,6 +6,7 @@ defaults = {
         'font-size': 11,
         'margin-top': 5,
         'margin-bottom': 10,
+        'first-indent': 0,
     },
     'title': {
         'font-family': 'Helvetica',
@@ -46,6 +47,7 @@ defaults = {
         'font-size': 24,
         'margin-top': 30,
         'margin-bottom': 20,
+        'min-after': 50,
     },
     'heading2': {
         'font-family': 'Helvetica',
@@ -53,6 +55,7 @@ defaults = {
         'font-size': 20,
         'margin-top': 20,
         'margin-bottom': 15,
+        'min-after': 50,
     },
     'heading3': {
         'font-family': 'Helvetica',
@@ -60,6 +63,7 @@ defaults = {
         'font-size': 16,
         'margin-top': 20,
         'margin-bottom': 15,
+        'min-after': 50,
     },
     'heading4': {
         'font-family': 'Helvetica',
@@ -67,6 +71,7 @@ defaults = {
         'font-size': 12,
         'margin-top': 20,
         'margin-bottom': 15,
+        'min-after': 50,
     },
     'heading5': {
         'font-family': 'Times',
@@ -74,6 +79,7 @@ defaults = {
         'font-size': 11,
         'margin-top': 10,
         'margin-bottom': 10,
+        'min-after': 50,
     },
     'heading6': {
         'font-family': 'Times',
@@ -81,6 +87,7 @@ defaults = {
         'font-size': 11,
         'margin-top': 10,
         'margin-bottom': 10,
+        'min-after': 50,
     },
     'heading7': {
         'font-family': 'Times',
@@ -88,6 +95,7 @@ defaults = {
         'font-size': 11,
         'margin-top': 10,
         'margin-bottom': 10,
+        'min-after': 50,
     },
 }
         

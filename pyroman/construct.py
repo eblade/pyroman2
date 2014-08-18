@@ -1,7 +1,7 @@
 from .element import Element
 
 
-class Box(Element):
+class Construct(Element):
     def init(self):
         self.word_wrap = self._params.get(
             'word-wrap', self.parent.word_wrap)
@@ -25,42 +25,33 @@ class Box(Element):
             'line-height', self.parent.line_height)
         self.space_width = self._params.get(
             'space-width', self.parent.space_width)
-        self.box_class = self._params.get(
-            'box-class', 'content')
         self.first_indent = self._params.get(
             'first-indent', self.parent.first_indent)
+        self.min_after = self._params.get(
+            'min-after', 0)
+        self.no_split = self._params.get(
+            'no-split', True)
 
         self._stream = []
         self._font_cache = {}
 
     def __repr__(self):
-        return '<Box [%s] (%i,%i) %ix%i on %s>' % (self.box_class,
-                                                   self.x, self.y,
-                                                   self.width, self.height,
-                                                   str(self.parent))
+        return '<Construct (%i,%i) %ix%i>' % (self.x, self.y,
+                                              self.width, self.height)
 
-    # returns a list of orphans (child nodes not fitting into this box)
     def calculate(self):
         current_y = 0
         last_bottom_margin = 0
-        last_included = None
-        for n, child in enumerate(self.children):
+        self.width = self.parent.width - self.margin_left - self.margin_right
+        for child in self.children:
+            print("Calculating " + str(child))
             child.x = child.margin_left
             child.y = current_y + max(last_bottom_margin, child.margin_top)
+            child.max_width = self.width - child.margin_left - child.margin_right
             child.calculate()  # should pass "obstacles" into this one
             current_y = child.y + child.height
             last_bottom_margin = child.margin_bottom
-            if current_y + child.min_after > self.height:
-                left_over = child.split(self.height - current_y + child.height)
-                if left_over is None:
-                    orphans = self.children[n:]
-                    self.children = self.children[:n]
-                else:
-                    orphans = [left_over] + self.children[n+1:]
-                    self.children = self.children[:n+1]
-                return orphans
-        if last_included is None:
-            return []
+            print("Calculated " + str(child))
 
     @property
     def dimension(self):

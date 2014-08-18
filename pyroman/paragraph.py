@@ -111,6 +111,7 @@ class TextLine:
 class Paragraph(Element):
     def init(self):
         self.label_class = LABEL_CLASS_MARK
+        self.calculated = False
         self.word_wrap = self._params.get(
             'word-wrap', self.parent.word_wrap)
         self.font_family = self._params.get(
@@ -148,13 +149,19 @@ class Paragraph(Element):
         self.margin_left = self._params.get(
             'margin-left', 0)
         self.first_indent = self._params.get(
-            'first_indent', self.parent.first_indent)
+            'first-indent', self.parent.first_indent)
         self.preformatted = self._params.get(
             'preformatted', False)
+        self.split_min_height = self._params.get(
+            'split-min-height', 0)
+        self.min_after = self._params.get(
+            'min-after', 0)
+        self.no_split = self._params.get(
+            'no-split', False)
         self.base_line = 0
 
     def __repr__(self):
-        return '<Paragraph (%i, _%i/%i) %i+%i+%i ay%i a_%i "%s">' % (
+        return '<Paragraph (%i, _%i/%i) %i+%i+%i ay%i a_%i w%i "%s">' % (
             self.x,
             self.base_line,
             self.y,
@@ -163,7 +170,8 @@ class Paragraph(Element):
             self.margin_bottom,
             int(self.absolute_position[1]),
             int(self.absolute_base_line),
-            self.content[:20]
+            int(self.width),
+            self.content[:20].replace('\n', '')
         )
 
     @property
@@ -172,6 +180,8 @@ class Paragraph(Element):
             yield obj
 
     def calculate(self):
+        if self.calculated:
+            return
         self.width = self.max_width
         self.height = 0
         x = 0
@@ -182,7 +192,7 @@ class Paragraph(Element):
             words = self.content.split('\n')
         else:
             self.content = self.content.replace('\n', ' ')
-            self.content = self.content.replace('\t', ' ')
+            self.content = self.content.replace('\t', '    ')
             self.content = self.content.replace('   ', ' ')
             self.content = self.content.replace('  ', ' ')
             words = self.content.split(' ')
@@ -226,7 +236,8 @@ class Paragraph(Element):
         for line in lines:
             for atom in line.children:
                 self.children.append(atom)
-        self.base_line = lines[0].base_line
+        self.base_line = lines[0].base_line or 0
+        self.calculated = True
 
     @property
     def atoms(self):
@@ -237,3 +248,31 @@ class Paragraph(Element):
     def absolute_base_line(self):
         ax, ay = self.absolute_position
         return ay + self.base_line
+
+    def split(self, height_left):
+        if self.no_split:
+            return None
+        latest_split_point = None
+        for n, atom in enumerate(self.children):
+            if atom.base_line <= height_left:
+                latest_split_point = n
+            else:
+                break
+        if latest_split_point is None:
+            return None
+        else:
+            left_over = self.children[n:]
+            self.children = self.children[:n]
+            self.height = self.children[-1].base_line
+            lop = Paragraph(self.doc, self.parent, {
+                'margin-top' : self.margin_top,
+                'margin-bottom': self.margin_bottom,
+            })
+            lop.children = left_over
+            for atom in lop.atoms:
+                atom.base_line -= self.height
+                atom.y -= self.height
+            lop.height = lop.children[-1].base_line
+            lop.width = self.width
+            lop.calculated = True
+            return lop
