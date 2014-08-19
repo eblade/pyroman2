@@ -30,7 +30,7 @@ def convert(document):
         font = Font(id=next_id())
         font.BaseFont(Name(font_info.get('pdf')))
         font.Encoding("/WinAnsiEncoding")
-        font.SubType("/Type1")
+        font.Subtype("/Type1")
         font.Name(name)
         font_objects.append((name, font.reference))
         font_names[font_key] = name

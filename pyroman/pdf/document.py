@@ -268,9 +268,9 @@ class Font(Dictionary):
         "Required Encoding = Name"
         self.put("/Encoding", value)
 
-    def SubType(self, value):
-        "Required SubType = Name"
-        self.put("/SubType", value)
+    def Subtype(self, value):
+        "Required Subtype = Name"
+        self.put("/Subtype", value)
 
     def Name(self, value):
         "Required Name = Name"
