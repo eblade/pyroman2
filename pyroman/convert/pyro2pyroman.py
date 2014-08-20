@@ -2,9 +2,9 @@ from pyroman.document import Document
 from pyroman.page import Page, Layout
 from pyroman.box import Box
 from pyroman.paragraph import Paragraph
-import pyroman.json as json
 from pyroman.pdf.dimension import A4, MarginDefault
 from pyroman.parameters import defaults
+
 
 def get_new_page(document, layout):
     page = Page(document)
@@ -15,6 +15,7 @@ def get_new_page(document, layout):
     })
     page.append(box)
     return page, box
+
 
 def convert(processor):
     page_width, page_height = A4
@@ -28,7 +29,8 @@ def convert(processor):
     layout.define_area(
         'main',
         (document.margin_left, document.margin_top),
-        (document.width - document.margin_right, document.height - document.margin_bottom))
+        (document.width - document.margin_right,
+         document.height - document.margin_bottom))
 
     first_page, first_box = get_new_page(document, layout)
 
@@ -49,10 +51,12 @@ def convert(processor):
             elif o.content.startswith('===== ') or o.content.startswith('.h5'):
                 p = Paragraph(document, first_box, defaults['heading5'])
                 c = o.content[6:-6]
-            elif o.content.startswith('====== ') or o.content.startswith('.h6'):
+            elif (o.content.startswith('====== ') or
+                  o.content.startswith('.h6')):
                 p = Paragraph(document, first_box, defaults['heading6'])
                 c = o.content[7:-7]
-            elif o.content.startswith('======= ') or o.content.startswith('.h7'):
+            elif (o.content.startswith('======= ') or
+                  o.content.startswith('.h7')):
                 p = Paragraph(document, first_box, defaults['heading7'])
                 c = o.content[8:-8]
             else:
