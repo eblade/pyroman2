@@ -1,0 +1,65 @@
+%PDF-1.7
+1 0 obj
+<< /Type /Catalog
+   /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages
+   /Kids [ 7 0 R ]
+   /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Font
+   /BaseFont /Helvetica
+   /Encoding /WinAnsiEncoding
+   /SubType /Type1
+   /Name /F1 >>
+endobj
+4 0 obj
+<< /Type /Font
+   /BaseFont /Helvetica-Bold
+   /Encoding /WinAnsiEncoding
+   /SubType /Type1
+   /Name /F2 >>
+endobj
+5 0 obj
+<< /F1 3 0 R
+   /F2 4 0 R >>
+endobj
+6 0 obj
+<< /Font 5 0 R >>
+endobj
+7 0 obj
+<< /Type /Page
+   /Parent 2 0 R
+   /Resources << /Font 5 0 R >>
+   /MediaBox [0 0 595 842]
+   /Contents 8 0 R >>
+endobj
+8 0 obj
+<< /Length 135 >>
+stream
+BT /F2 18 Tf   
+56 765 Td   
+2 w   
+0.200000 g   
+(Heading) Tj
+ET
+BT /F1 12 Tf   
+56 737 Td   
+0 Tr   
+0.000000 g   
+(Some text) Tj
+ET
+
+endstream
+endobj
+xref
+0 1
+0000000000 65536 n 
+trailer
+<< /Root 1 0 R
+   /Size 9 >>
+startxref
+760
+%%EOF

@@ -9,6 +9,7 @@ And this is the text of the first paragraph.
 = This is the second heading =
 
 And this is the text of the second paragraph.
+There is *also bold* and **italic** text. Some `inline code`.
 
 Code:
 Some code goes here

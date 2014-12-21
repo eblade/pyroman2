@@ -97,6 +97,15 @@ defaults = {
         'margin-bottom': 10,
         'min-after': 50,
     },
+    'bullet': [
+        ('Helvetica', 'bold', 12, '*'),
+        ('Helvetica', 'bold', 12, '+'),
+        ('Helvetica', 'standard', 12, '-'),
+        ('Helvetica', 'standard', 12, '...'),
+        ('Helvetica', 'standard', 12, ':'),
+        ('Helvetica', 'standard', 12, '.'),
+        ('Helvetica', 'standard', 12, ','),
+    ],
 }
         
 
@@ -114,6 +123,7 @@ class Parameters:
             'line-height': {'type': float, 'default': 1.2},
             'space-width': {'type': int, 'default': 3},
             'first-indent': {'type': int, 'default': 0},
+            'input-format': {'type': str, 'default': 'pyroman'},
         }
 
     def get_default(self, field):

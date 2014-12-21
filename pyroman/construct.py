@@ -63,6 +63,6 @@ class Construct(Element):
         self.width = width
         self.height = height
 
-    # we don't split basic boxes, but subclasses may override this
+    # we don't split basic constructs, but subclasses may override this
     def split(self, height_left):
         return None

@@ -52,6 +52,7 @@ class Document(Element):
         self.line_height = self._params.get('line-height')
         self.space_width = self._params.get('space-width')
         self.first_indent = self._params.get('first-indent')
+        self.input_format = self._params.get('input-format')
 
         self._font_cache = {}
 

@@ -5,7 +5,7 @@ from optparse import OptionParser
 from pyroman.parse.pyroman.processor import Processor
 from pyroman.convert import pyro2pyroman, text2pyroman, pyroman2pdf
 
-# import pyroman.json as json
+import pyroman.json as json
 
 usage = "usage: %prog [options] infile [outfile]"
 parser = OptionParser(usage=usage)
@@ -57,7 +57,15 @@ else:
     print("'%s' is not a valid input format" % options.input_format)
     exit(1)
 
-pdf = pyroman2pdf.convert(document)
+if options.output_format == 'pdf':
+    pdf = pyroman2pdf.convert(document)
+    with open(outfile, 'w') as f:
+        f.write(str(pdf))
 
-with open(outfile, 'w') as f:
-    f.write(str(pdf))
+elif options.output_format == 'json':
+    with open(outfile, 'w') as f:
+        f.write(json.dumps(document))
+
+elif options.output_format == 'hierarchy':
+    with open(outfile, 'w') as f:
+        f.write(json.dumph(document))

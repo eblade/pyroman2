@@ -1,4 +1,5 @@
 from pyroman.paragraph import Paragraph
+from pyroman.parse.rst.paragraph import parse_paragraph
 from tests.fixture import a4doc
 
 import pyroman.json as json
@@ -9,7 +10,7 @@ class TestParagraph:
         document, page, box = a4doc()
 
         p = Paragraph(document, box)
-        p.content = 'This is some text that is too long to fit in one line'
+        p.children = parse_paragraph('This is some text that is too long to fit in one line')
         p.max_width = 200
         box.append(p)
 
@@ -28,14 +29,12 @@ class TestParagraph:
     def test_two_paragraphs(self):
         document, page, box = a4doc()
 
-        p1 = Paragraph(document, box, {
-            'content': 'This is the content of the first paragraph',
-        })
+        p1 = Paragraph(document, box)
+        p1.children = parse_paragraph('This is the content of the first paragraph')
         box.append(p1)
 
-        p2 = Paragraph(document, box, {
-            'content': 'This is the content of the second paragraph',
-        })
+        p2 = Paragraph(document, box)
+        p2.children = parse_paragraph('This is the content of the second paragraph')
         box.append(p2)
 
         orphans = box.calculate()
@@ -50,3 +49,26 @@ class TestParagraph:
             assert len(p.children) == 8
 
         assert p2.base_line == p2.children[0].line_height
+
+    def test_parse_rst_plain(self):
+        atoms = list(parse_paragraph('one two three'))
+        assert len(atoms) == 3
+        assert atoms[0].content == 'one'
+        assert atoms[1].content == 'two'
+        assert atoms[2].content == 'three'
+
+    def test_parse_rst_format(self):
+        atoms = list(parse_paragraph('one *two* **three** `four`'))
+        assert len(atoms) == 4
+        assert atoms[0].content == 'one'
+        assert atoms[0].font_style == ''
+        assert atoms[0].font_family == None
+        assert atoms[1].content == 'two'
+        assert atoms[1].font_style == 'bold'
+        assert atoms[1].font_family == None
+        assert atoms[2].content == 'three'
+        assert atoms[2].font_style == 'italic'
+        assert atoms[2].font_family == None
+        assert atoms[3].content == 'four'
+        assert atoms[3].font_style == ''
+        assert atoms[3].font_family == 'Courier'

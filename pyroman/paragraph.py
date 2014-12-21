@@ -36,8 +36,8 @@ class TextAtom(Element):
         return '<Atom %s%i _%s |%i w%i "%s"%s>' % ('+' if self.indent is not None and self.indent  >= 0 else '', 
                                                     int(self.indent or 0),
                                                     '?' if self.base_line is None else str(int(self.base_line)),
-                                                    self.line_height,
-                                                    self.width,
+                                                    self.line_height or 0,
+                                                    self.width or 0,
                                                     self.content[:20],
                                                     specials)
 
@@ -180,37 +180,25 @@ class Paragraph(Element):
             yield obj
 
     def calculate(self):
-        if self.calculated:
-            return
         self.width = self.max_width
         self.height = 0
         x = 0
         y = 0
-        if self.content.startswith('\n'):
-            self.content = self.content[1:]
-        if self.preformatted:
-            words = self.content.split('\n')
-        else:
-            self.content = self.content.replace('\n', ' ')
-            self.content = self.content.replace('\t', '    ')
-            self.content = self.content.replace('   ', ' ')
-            self.content = self.content.replace('  ', ' ')
-            words = self.content.split(' ')
         lines = []
         line_no = 0
         current_line = TextLine(0, self.width, indent=self.first_indent)
         left = self.width
-        for word in words:
-            atom = TextAtom(self.doc, self, {
-                'content': word,
-                'font-family': self.font_family,
-                'font-style': self.font_style,
-                'font-size': self.font_size,
-                'text-color': self.text_color,
-                'gray': self.gray,
-                'scale': self.scale,
-            })
+        for atom in self.children:
+            atom.doc = self.doc
+            atom.parent = self
+            atom.font_family = atom.font_family or self.font_family
+            atom.font_style = atom.font_style or self.font_style
+            atom.font_size = atom.font_size or self.font_size
+            atom.text_color = atom.text_color or self.text_color
+            atom.gray = atom.gray or self.gray
+            atom.scale = atom.scale or self.scale
             atom.calculate()
+
             if atom.width <= left:
                 left = current_line.add_atom(atom)
                 if self.preformatted:
